@@ -1,4 +1,12 @@
 # ASP.NET
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Microsoft Azure Internal Consumption(70e57b68-8c63-4560-b97f-bf013da22a65)'
+    appType: 'webApp'
+    WebAppName: 'TestVCIOXHealth'
+    VirtualApplication: 'TestSIOX'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4

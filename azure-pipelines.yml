@@ -1,4 +1,9 @@
 # ASP.NET
+- task: AzureAppServiceSettings@1
+  inputs:
+    azureSubscription: 'Microsoft Azure Internal Consumption(70e57b68-8c63-4560-b97f-bf013da22a65)'
+    appName: 'aspnetwebproject'
+    resourceGroupName: 'aspnetwebproject-rg'
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4

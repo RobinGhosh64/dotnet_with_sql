@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_eventhub_listener_la_name": {
+            "value": "eventhub-listener-la"
+        },
+        "connections_eventhubs_externalid": {
+            "value": "/subscriptions/70e57b68-8c63-4560-b97f-bf013da22a65/resourceGroups/ncr-test-rg/providers/Microsoft.Web/connections/eventhubs"
+        }
+    }
+}

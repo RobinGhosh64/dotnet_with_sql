@@ -1,0 +1,135 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_eventhub_listener_la_name": {
+            "defaultValue": "eventhub-listener-la",
+            "type": "String"
+        },
+        "connections_eventhubs_externalid": {
+            "defaultValue": "/subscriptions/70e57b68-8c63-4560-b97f-bf013da22a65/resourceGroups/ncr-test-rg/providers/Microsoft.Web/connections/eventhubs",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_eventhub_listener_la_name')]",
+            "location": "westus",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_events_are_available_in_Event_Hub": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 3
+                            },
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['eventhubs']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/@{encodeURIComponent('rsg-event-hub-name')}/events/batch/head",
+                                "queries": {
+                                    "consumerGroupName": "$Default",
+                                    "contentType": "application/json",
+                                    "maximumEventsCount": 50
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Parse_JSON": {
+                            "runAfter": {},
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@triggerBody()",
+                                "schema": {
+                                    "items": {
+                                        "properties": {
+                                            "data": {
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "validationCode": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "dataVersion": {
+                                                "type": "string"
+                                            },
+                                            "dothread": {
+                                                "type": "string"
+                                            },
+                                            "eventTime": {
+                                                "type": "string"
+                                            },
+                                            "eventType": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "metadataVersion": {
+                                                "type": "string"
+                                            },
+                                            "subject": {
+                                                "type": "string"
+                                            },
+                                            "topic": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "dothread",
+                                            "id",
+                                            "topic",
+                                            "subject",
+                                            "data",
+                                            "eventType",
+                                            "eventTime",
+                                            "metadataVersion",
+                                            "dataVersion"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "eventhubs": {
+                                "connectionId": "[parameters('connections_eventhubs_externalid')]",
+                                "connectionName": "eventhubs",
+                                "id": "/subscriptions/70e57b68-8c63-4560-b97f-bf013da22a65/providers/Microsoft.Web/locations/westus/managedApis/eventhubs"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
